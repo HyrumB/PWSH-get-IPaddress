@@ -170,34 +170,31 @@ function Get-WindowsIP {
     
     $macSting = ipconfig /all | Select-String "Physical Address"
     # remove extranious info
-    $macAddresses = $macSting -replace "Physical Address.*: ", ""
+    $macAddress = $macSting -replace "   Physical Address.*: ", ""
 
     foreach ($ip in $ips) {
 
-        if ($ip.AddressFamily -eq "IPv4" -and $ip.IPAddress -ne "127.0.0.1") {
-            # get the ipv4 info
+        if ($ip.AddressFamily -eq "IPv4" ) {
             if ($AddressType -eq "IPv4" -or $AddressType -eq "both") {
-                $mac = $macAddresses | Where-Object { $ip.InterfaceAlias -like "*$_*" } | Select-Object -First 1
                 $ipAddresses += [PSCustomObject]@{
                     IPAddress   = $ip.IPAddress
                     Prefix      = $ip.PrefixLength
                     Interface   = $ip.InterfaceAlias
                     AddressType = "IPv4"
-                    MACAddress  = $mac
+                    MACAddress  = $macAddress
                 }
             }
         }
 
-        elseif ($ip.AddressFamily -eq "IPv6" -and $ip.IPAddress -notlike "::1") {
+        elseif ($ip.AddressFamily -eq "IPv6") {
             # get the ipv6 info
             if ($AddressType -eq "IPv6" -or $AddressType -eq "both") {
-                $mac = $macAddresses | Where-Object { $ip.InterfaceAlias -like "*$_*" } | Select-Object -First 1
                 $ipAddresses += [PSCustomObject]@{
                     IPAddress   = $ip.IPAddress
                     Prefix      = $ip.PrefixLength
                     Interface   = $ip.InterfaceAlias
                     AddressType = "IPv6"
-                    MACAddress  = $mac
+                    MACAddress  = $macAddress
                 }
             }
         }

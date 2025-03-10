@@ -2,14 +2,14 @@
 
 
 # declaire the class to store the ip
-class Ipinfo{
+class Ipinfo {
     [System.Net.IPAddress]$IPaddress
     [int]$prefixlength
     [string]$interface
     [string]$AddressFamily
     [string]$macaddress
 
-    Ipinfo([System.Net.IPAddress]$IPaddress, [int]$prefixlength, [string]$interface, [string]$AddressFamily, [string]$macaddress){
+    Ipinfo([System.Net.IPAddress]$IPaddress, [int]$prefixlength, [string]$interface, [string]$AddressFamily, [string]$macaddress) {
         $this.IPaddress = $IPaddress
         $this.prefixlength = $prefixlength
         $this.interface = $interface
@@ -167,9 +167,10 @@ function Get-WindowsIP {
     $ipAddresses = @() # Initialize an array to store IP information
 
     # Get MAC address(es)
-    $macAddresses = ipconfig /all | Select-String "Physical Address" | ForEach-Object {
-        $_.Line -replace "Physical Address.*: ", "" | Trim
-    }
+    
+    $macSting = ipconfig /all | Select-String "Physical Address"
+    # remove extranious info
+    $macAddresses = $macSting -replace "Physical Address.*: ", ""
 
     foreach ($ip in $ips) {
 
@@ -209,7 +210,8 @@ function Get-WindowsIP {
 if ($MyInvocation.InvocationName -eq '.') {
     Write-Host "ip command initiated"
     
-} else {
+}
+else {
     Get-IPAddress 
 
 }
